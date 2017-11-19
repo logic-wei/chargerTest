@@ -30,7 +30,7 @@ timeCount=0
 while [ $timeCount -lt $testTime ]
 do
 	echo -n "timeCount=$timeCount "
-	echo -n "boadTemp=$(cat $boardTempFile) "
+	echo -n "boardTemp=$(cat $boardTempFile) "
 	echo -n "batteryTemp=$(cat $batteryTempFile) "
 	echo -n "batteryCurrent=$(cat $batteryCurrentFile) "
 	echo -n "soc=$(cat $socFile) "
