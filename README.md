@@ -10,6 +10,7 @@ recording the process when charging.
 ```bash
 adb push chargingTest.sh /data
 adb shell
+cd /data
 su
 chmod a+x chargingTest.sh
 ./chargingTest.sh > chargingProcess.txt &
