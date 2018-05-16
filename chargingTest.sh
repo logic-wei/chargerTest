@@ -15,6 +15,10 @@ boardTempFile=/sys/class/meizu/battery/board_temp
 batteryTempFile=/sys/class/power_supply/battery/temp
 # battery current file
 batteryCurrentFile=/sys/class/power_supply/battery/current_now
+# battery voltage file
+batteryVoltageFile=/sys/class/power_supply/battery/voltage_now
+# input current file
+inputCurrentFile=/sys/class/power_supply/battery/input_current_now
 # soc file
 socFile=/sys/class/power_supply/battery/capacity
 
@@ -33,6 +37,8 @@ do
 	echo -n "boardTemp=$(cat $boardTempFile) "
 	echo -n "batteryTemp=$(cat $batteryTempFile) "
 	echo -n "batteryCurrent=$(cat $batteryCurrentFile) "
+	echo -n "batteryVoltage=$(cat $batteryVoltageFile) "
+	echo -n "inputCurrent=$(cat $inputCurrentFile) "
 	echo -n "soc=$(cat $socFile) "
 	echo ""
 	sleep $deltaTime
