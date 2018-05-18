@@ -127,7 +127,7 @@ def parse(path):
 
                 key_words_val_ser.append(key_words_val_cur)
                 key_words_val_cur = copy.deepcopy(key_words_val_ser[-1])
-        return key_words_val_ser
+    return key_words_val_ser
 
 # under dev
 def plot_key_words_value(values):
