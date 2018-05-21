@@ -5,6 +5,7 @@ import getopt
 import re
 import time
 import copy
+import xlsxwriter as xlw
 
 from dateutil import parser
 
@@ -35,7 +36,7 @@ KEY_WORDS_PATTERN = {
 }
 
 KEY_WORDS_VALUE = {
-    "time":     parser.parse("1900-1-1 00:00:00"),
+    "time":     "1900-1-1 0:0:0",
     "chgtyp":   "unknown",
     "cc":       0,
     "icl":      0,
@@ -57,21 +58,29 @@ KEY_WORDS_VALUE = {
 }
 
 INT_KEY_WORDS = (
-    "cc", "icl", "brdtmp", "vbus", "ulmt",
-    "scrn", "fstchg", "usoc", "tsoc", "vbat",
-    "ibat", "usbvltg", "dischg"
+    "cc",       "icl",      "vbus",     "ulmt",     "scrn",
+    "fstchg",   "usoc",     "tsoc",     "vbat",     "ibat",
+    "usbvltg",  "dischg"
 )
 
 FLT_KEY_WORDS = (
-    "brdtmp", "battmp", "usbtmp"
+    "brdtmp",   "battmp",   "usbtmp"
 )
 
 STR_KEY_WORDS = (
-    "chgtyp", "petyp"
+    "chgtyp",   "petyp"
 )
 
 SPC_KEY_WORDS = (
-    'plg', "time"
+    "plg",      "time"
+)
+
+ORDERED_KEY_WORDS = (
+    "time",     "plg" ,     "chgtyp",   "petyp",
+    "brdtmp",   "battmp",   "usbtmp",
+    "cc",       "icl",      "ulmt",     "scrn",     "dischg",
+    "fstchg",   "usoc",     "tsoc",     "vbat",     "ibat",
+    "usbvltg"
 )
 
 
@@ -123,13 +132,28 @@ def parse(path):
                             elif match.group(1) == "out":
                                 key_words_val_cur[key_word] = 0
                         elif key_word == "time":
-                            key_words_val_cur["time"] = parser.parse(match.group(1))
+                            # key_words_val_cur["time"] = parser.parse(match.group(1))
+                            key_words_val_cur["time"] = match.group(1)
 
                 key_words_val_ser.append(key_words_val_cur)
                 key_words_val_cur = copy.deepcopy(key_words_val_ser[-1])
+
     return key_words_val_ser
 
-# under dev
+def save_to_xls(val_ser, filename):
+    workbook = xlw.Workbook(filename)
+    worksheet = workbook.add_worksheet()
+    worksheet.write_row(0, 0, ORDERED_KEY_WORDS)
+    row = 1
+    for val in val_ser:
+        col = 0
+        for key_word in ORDERED_KEY_WORDS:
+            worksheet.write(row, col, dict(val)[key_word])
+            col += 1
+        row += 1
+    workbook.close()
+
+# 4test
 def plot_key_words_value(values):
     y = []
     for value in values:
@@ -138,6 +162,7 @@ def plot_key_words_value(values):
     plt.plot(x, y)
     plt.show()
 
+# 4test
 def plot_key_words_value2(values):
     y = []
     x = []
@@ -147,24 +172,40 @@ def plot_key_words_value2(values):
     plt.plot(x, y)
     plt.show()
 
+def help():
+    help_msg = (
+        "usage: python mpower_tools.py logname [options]\n"
+        "option:\n"
+        "   -h                  print help message\n"
+        "       --help\n"
+        "   -o <filename>       the excel file save to\n"
+        "       --output\n"
+        "   -p <curvename>      plot the given curve\n"
+        "       --plot\n"
+    )
+    print(help_msg)
+
 #under dev
 def main():
     log_path = ""
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hl:v", ["help", "log", "version"])
+        opts, args = getopt.getopt(
+            sys.argv[1:],
+            "hvl:o:",
+            ["help", "version", "log", "output"])
     except getopt.GetoptError:
-        print("usage: mpower_tools -l <log_path>")
+        help()
         sys.exit(0)
     for opt, arg in opts:
         if opt == "-h":
-            print("usage: mpower_tools -l <log_path>")
+            help()
+            exit(0)
         elif opt in ("-v", "--version"):
             print("version: v0.1")
         elif opt in ("-l", "--log"):
             log_path = arg
-    values = parse(log_path)
-    plot_key_words_value2(values)
-
+    val_ser = parse(log_path)
+    save_to_xls(val_ser, "/home/weipeng/pro/chargerTest/chargerTest/output.xlsx")
 
 if __name__ == "__main__":
     main()
