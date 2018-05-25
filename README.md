@@ -71,12 +71,12 @@ optional arguments:
 python mpower_tools.py ./log -o output.xlsx
 ```
 ![save2excel](https://github.com/logic-wei/chargerTest/raw/master/screenshots/save2excel.png)
-#### plot the vbat value by time
+#### plot the vbat value sequentially
 ```bash
 python mpower_tools.py ./log -p vbat
 ```
 ![plotvbatseq](https://github.com/logic-wei/chargerTest/raw/master/screenshots/plot_vbat_seq.png)
-#### plot the vbat value sequentially
+#### plot the vbat value by time
 ```bash
 python mpower_tools.py ./log -P vbat
 ```
