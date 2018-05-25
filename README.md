@@ -70,14 +70,14 @@ optional arguments:
 ```bash
 python mpower_tools.py ./log -o output.xlsx
 ```
-![save2excel](https://github.com/logic-wei/universal_i2c/raw/master/screenshots/save2excel.png)
+![save2excel](https://github.com/logic-wei/chargerTest/raw/master/screenshots/save2excel.png)
 #### plot the vbat value by time
 ```bash
 python mpower_tools.py ./log -p vbat
 ```
-![plotvbatseq](https://github.com/logic-wei/universal_i2c/raw/master/screenshots/plotvbatseq.png)
+![plotvbatseq](https://github.com/logic-wei/chargerTest/raw/master/screenshots/plot_vbat_seq.png)
 #### plot the vbat value sequentially
 ```bash
 python mpower_tools.py ./log -P vbat
 ```
-![plotvbatbytime](https://github.com/logic-wei/universal_i2c/raw/master/screenshots/plotvbatbytime.png)
+![plotvbatbytime](https://github.com/logic-wei/chargerTest/raw/master/screenshots/plot_vbat_by_time.png)
