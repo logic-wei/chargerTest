@@ -1,11 +1,8 @@
 import matplotlib.pyplot as plt
-import numpy as np
-import sys
-import getopt
 import re
-import time
 import copy
 import xlsxwriter as xlw
+import argparse
 
 from dateutil import parser
 
@@ -83,8 +80,8 @@ ORDERED_KEY_WORDS = (
     "usbvltg"
 )
 
-
 def parse(path):
+    """parse the given log file as val_ser"""
     global KEY_WORDS_PATTERN
     global KEY_WORDS_VALUE
 
@@ -141,6 +138,7 @@ def parse(path):
     return key_words_val_ser
 
 def save_to_xls(val_ser, filename):
+    """save val_ser as excel file"""
     workbook = xlw.Workbook(filename)
     worksheet = workbook.add_worksheet()
     worksheet.write_row(0, 0, ORDERED_KEY_WORDS)
@@ -153,59 +151,52 @@ def save_to_xls(val_ser, filename):
         row += 1
     workbook.close()
 
-# 4test
-def plot_key_words_value(values):
+def plot_key_word_seq(val_ser, key_word):
+    """plot the value of given key word sequentially"""
     y = []
-    for value in values:
-        y.append(value["time"])
+    for val in val_ser:
+        y.append(val[key_word])
     x = range(len(y))
     plt.plot(x, y)
     plt.show()
 
-# 4test
-def plot_key_words_value2(values):
+def plot_key_word_by_time(val_ser, key_word):
+    """plot the value of given key word by time"""
     y = []
     x = []
-    for value in values:
-        x.append(value["time"])
-        y.append(value["vbat"])
+    for val in val_ser:
+        y.append(val[key_word])
+        x.append(parser.parse(val["time"]))
     plt.plot(x, y)
     plt.show()
 
-def help():
-    help_msg = (
-        "usage: python mpower_tools.py logname [options]\n"
-        "option:\n"
-        "   -h                  print help message\n"
-        "       --help\n"
-        "   -o <filename>       the excel file save to\n"
-        "       --output\n"
-        "   -p <curvename>      plot the given curve\n"
-        "       --plot\n"
-    )
-    print(help_msg)
-
-#under dev
 def main():
-    log_path = ""
-    try:
-        opts, args = getopt.getopt(
-            sys.argv[1:],
-            "hvl:o:",
-            ["help", "version", "log", "output"])
-    except getopt.GetoptError:
-        help()
-        sys.exit(0)
-    for opt, arg in opts:
-        if opt == "-h":
-            help()
-            exit(0)
-        elif opt in ("-v", "--version"):
-            print("version: v0.1")
-        elif opt in ("-l", "--log"):
-            log_path = arg
-    val_ser = parse(log_path)
-    save_to_xls(val_ser, "/home/weipeng/pro/chargerTest/chargerTest/output.xlsx")
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument("logpath")
+    argparser.add_argument("-o", "--output",
+                           help="save as excel file")
+    argparser.add_argument("-p", "--plot",
+                           choices=INT_KEY_WORDS+FLT_KEY_WORDS,
+                           help="plot the given argument sequentially")
+    argparser.add_argument("-P", "--PLOT",
+                           choices=INT_KEY_WORDS + FLT_KEY_WORDS,
+                           help="plot the given argument by time")
+    argparser.add_argument("-v", "--version",
+                           action="store_true",
+                           help="print version")
+    args = argparser.parse_args()
+
+    if args.output:
+        val_ser = parse(args.logpath)
+        save_to_xls(val_ser, args.output)
+    elif args.plot:
+        val_ser = parse(args.logpath)
+        plot_key_word_seq(val_ser, args.plot)
+    elif args.PLOT:
+        val_ser = parse(args.logpath)
+        plot_key_word_by_time(val_ser, args.PLOT)
+    elif args.version:
+        print("v1.0")
 
 if __name__ == "__main__":
     main()
